@@ -127,17 +127,28 @@ class MessageHistory:
                 f"**History Transfer Progress**\n{bar}"
             )
 
+        lastauthor = 0
+        lasttime = datetime.datetime(2000, 1, 1)
+
         for pack in self._history:
             files = []
             for path in pack.attachments:
                 filename = path.replace(f"{pack.message_id}-", "")
                 files.append(discord.File(path, filename))
 
+            if lastauthor == pack.author_id and (pack.time - lasttime).days == 0:
+                content = pack.content
+            else:
+                content = f'> {pack.author_name} sent on {pack.time.strftime("%m/%d/%Y, %H:%M:%S (UTC)")}:\n{pack.content}'
+
+            lastauthor = pack.author_id
+            lasttime = pack.time
+
             msg = await channel.send(
                 silent=True,
                 files=files,
                 embeds=pack.embeds,
-                content=f'{pack.author_name} sent on {pack.time.strftime("%m/%d/%Y, %H:%M:%S (UTC)")}\n{pack.content}',
+                content=content,
             )
 
             for reaction in pack.reactions:

@@ -21,6 +21,7 @@ This bot helps pack all messages in one channel and recreate them in another cha
 * `Views` are not transferred
 * `Threads` are not transferred
 * Only text channels are allowed
+* Replies won't get linked
 
 ## Commands
 
@@ -31,7 +32,7 @@ DiscordRelocate:
   pack     Pack everything in a channel (by channel id) and download as zip file
   relocate Relocate messages from one channel to another channel (by channel id)
   servers  List shared servers between me (as admin) and bot
-​No Category:
+No Category:
   help     Shows this message
 
 Type !help command for more info on a command.

@@ -39,19 +39,20 @@ class DiscordRelocate(commands.Cog):
             )
 
         else:
-            embed = discord.Embed(title="Shared admin servers")
-            for server in admin_shared_servers:
-                name = server.name
-                if server.id == ctx.guild.id:
-                    name = f"{name} (Current)"
+            for idx in range(0, len(admin_shared_servers), 25):
+                embed = discord.Embed(title="Shared admin servers")
+                for server in admin_shared_servers[idx : (idx + 25)]:
+                    name = server.name
+                    if server.id == ctx.guild.id:
+                        name = f"{name} (Current)"
 
-                embed.add_field(name=name, value=f"id = {server.id}", inline=False)
+                    embed.add_field(name=name, value=f"id = {server.id}", inline=False)
 
-            await ctx.reply(embed=embed)
+                await ctx.reply(embed=embed)
 
     @commands.command()
     @commands.has_permissions(administrator=True)
-    async def channels(self, ctx: commands.Context, *, server_id: int):
+    async def channels(self, ctx: commands.Context, server_id: int):
         """List text channels on a server by server id"""
 
         user = ctx.author
@@ -72,26 +73,32 @@ class DiscordRelocate(commands.Cog):
                 await ctx.reply("No text channels found on server!")
 
             else:
-                embed = discord.Embed(
-                    title="Channels",
-                    description=f"Channels on the server\n{server.name} (id = {server.id})",
-                )
-                for channel in channels:
-                    embed.add_field(
-                        name=channel.name,
-                        value=f"id = {channel.id} ({channel.category if channel.category is None else channel.category.name})",
-                        inline=False,
+                for idx in range(0, len(channels), 25):
+                    embed = discord.Embed(
+                        title="Channels",
+                        description=f"Channels on the server\n{server.name} (id = {server.id})",
                     )
+                    for channel in channels[idx : (idx + 25)]:
+                        embed.add_field(
+                            name=channel.name,
+                            value=f"id = {channel.id} ({channel.category if channel.category is None else channel.category.name})",
+                            inline=False,
+                        )
 
-                await ctx.reply(embed=embed)
+                    await ctx.reply(embed=embed)
 
         except Exception:
             await ctx.reply("Invalid server id!")
 
     @commands.command()
     @commands.has_permissions(administrator=True)
-    async def pack(self, ctx: commands.Context, *, channel_id: int):
+    async def pack(
+        self, ctx: commands.Context, channel_id: Union[int, discord.TextChannel]
+    ):
         """Pack everything in a channel (by channel id) and download as zip file"""
+
+        if isinstance(channel_id, discord.TextChannel):
+            channel_id = channel_id.id
 
         user = ctx.author
         history = MessageHistory(self._bot, channel_id, ctx)
@@ -127,8 +134,19 @@ class DiscordRelocate(commands.Cog):
 
     @commands.command()
     @commands.has_permissions(administrator=True)
-    async def relocate(self, ctx: commands.Context, *, from_id: int, to_id: int):
+    async def relocate(
+        self,
+        ctx: commands.Context,
+        from_id: Union[int, discord.TextChannel],
+        to_id: Union[int, discord.TextChannel],
+    ):
         """Relocate messages from one channel to another channel (by channel id)"""
+
+        if isinstance(from_id, discord.TextChannel):
+            from_id = from_id.id
+
+        if isinstance(to_id, discord.TextChannel):
+            to_id = to_id.id
 
         user = ctx.author
         history = MessageHistory(self._bot, from_id, ctx)
@@ -162,9 +180,14 @@ class DiscordRelocate(commands.Cog):
     @commands.command()
     @commands.has_permissions(administrator=True)
     async def clear(
-        self, ctx: commands.Context, *, channel_id: Union[int, None] = None
+        self,
+        ctx: commands.Context,
+        channel_id: Union[int, discord.TextChannel, None] = None,
     ):
         """Clear everything in channel by id (be cautious!)"""
+
+        if isinstance(channel_id, discord.TextChannel):
+            channel_id = channel_id.id
 
         try:
             if channel_id is None:
@@ -176,7 +199,8 @@ class DiscordRelocate(commands.Cog):
             if channel is None:
                 raise Exception()
 
-            await channel.purge(limit=None)
+            async for msg in channel.history(limit=None):
+                await msg.delete()
 
         except Exception:
             await ctx.reply("Invalid channel id!")

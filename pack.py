@@ -131,15 +131,19 @@ class MessageHistory:
         lasttime = datetime.datetime(2000, 1, 1)
 
         for pack in self._history:
+            author = self._bot.get_user(pack.author_id)
+
             files = []
             for path in pack.attachments:
                 filename = path.replace(f"{pack.message_id}-", "")
                 files.append(discord.File(path, filename))
 
-            if lastauthor == pack.author_id and (pack.time - lasttime).days == 0:
-                content = pack.content
-            else:
-                content = f'> {pack.author_name} sent on {pack.time.strftime("%m/%d/%Y, %H:%M:%S (UTC)")}:\n{pack.content}'
+            if lastauthor != pack.author_id or (pack.time - lasttime).days > 0:
+                embed = discord.Embed(
+                    description=f"Sent on {pack.time.strftime('%m/%d/%Y, %H:%M:%S (UTC)')}"
+                )
+                embed.set_author(name=author.display_name, icon_url=author.avatar.url)
+                await channel.send(silent=True, embed=embed)
 
             lastauthor = pack.author_id
             lasttime = pack.time
@@ -148,7 +152,7 @@ class MessageHistory:
                 silent=True,
                 files=files,
                 embeds=pack.embeds,
-                content=content,
+                content=pack.content,
             )
 
             for reaction in pack.reactions:

@@ -1,7 +1,7 @@
 import os
 import discord
 from typing import List, Union
-from discord.ext import commands
+from discord.ext import commands, tasks
 from pack import MessageHistory
 
 
@@ -12,6 +12,16 @@ class DiscordRelocate(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         print(f"Bot {self._bot.user} is ready")
+        await self.update_status()
+
+    @tasks.loop(hours=1)
+    async def update_status(self):
+        await self._bot.change_presence(
+            activity=discord.Activity(
+                type=discord.ActivityType.listening,
+                name=f"{len(self._bot.guilds)} servers",
+            )
+        )
 
     @commands.command()
     @commands.has_permissions(administrator=True)

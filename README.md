@@ -1,6 +1,6 @@
 # DiscordRelocate
 
-<img src="assets/DiscordRelocate.png" alt="bot-avatar" width="150" />
+<img src="assets/DiscordRelocate-v2.png" alt="bot-avatar" width="150" />
 
 ------
 

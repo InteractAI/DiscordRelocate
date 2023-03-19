@@ -55,6 +55,9 @@ class MessageHistory:
         current = 0
         report_freq = max(1, total // PROGRESS_BAR_LEN)
 
+        if total == 0:
+            return
+
         if self._progress_ctx is not None:
             bar = self._build_progress_bar(current, total)
             progress = await self._progress_ctx.reply(
@@ -121,6 +124,9 @@ class MessageHistory:
         current = 0
         report_freq = max(1, total // PROGRESS_BAR_LEN)
 
+        if total == 0:
+            return
+
         if self._progress_ctx is not None:
             bar = self._build_progress_bar(current, total)
             progress = await self._progress_ctx.reply(
@@ -177,6 +183,9 @@ class MessageHistory:
 
     def zip(self) -> str:
         """Create zipfile and return zipfile path"""
+
+        if len(self._history) == 0:
+            raise ""
 
         if not os.path.exists(self._cache_path):
             raise ""

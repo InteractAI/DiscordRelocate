@@ -87,4 +87,5 @@ Make sure the bot has access to messages on both channels!
 
 ------
 
-[Add to your server](https://discord.com/api/oauth2/authorize?client_id=1085393893186613368&permissions=137439341632&scope=bot)
+[Add to your server]() (link no longer available).\
+We recommend running this bot locally for the security of your messages.

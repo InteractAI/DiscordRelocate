@@ -2,3 +2,5 @@ venv
 tmp**
 .env
 **pycache**
+*.log
+*.sh

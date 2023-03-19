@@ -1,5 +1,6 @@
 import os
 import discord
+import traceback
 from typing import List, Union
 from discord.ext import commands, tasks
 from pack import MessageHistory
@@ -40,7 +41,7 @@ class DiscordRelocate(commands.Cog):
                     admin_shared_servers.append(server)
 
             except Exception:
-                pass
+                traceback.print_exc()
 
         # check shared admin servers
         if len(admin_shared_servers) == 0:
@@ -98,6 +99,7 @@ class DiscordRelocate(commands.Cog):
                     await ctx.reply(embed=embed)
 
         except Exception:
+            traceback.print_exc()
             await ctx.reply("Invalid server id!")
 
     @commands.command()
@@ -135,8 +137,8 @@ class DiscordRelocate(commands.Cog):
             else:
                 await ctx.reply("Failed to pack history into zip!")
 
-        except Exception as e:
-            print(e)
+        except Exception:
+            traceback.print_exc()
             await ctx.reply("Invalid channel id!")
 
         finally:
@@ -181,7 +183,10 @@ class DiscordRelocate(commands.Cog):
             # transfer messages
             await history.send(to_id)
 
+            await ctx.reply("Relocated messages successfully!")
+
         except Exception:
+            traceback.print_exc()
             await ctx.reply("Invalid channel id!")
 
         finally:
@@ -213,6 +218,7 @@ class DiscordRelocate(commands.Cog):
                 await msg.delete()
 
         except Exception:
+            traceback.print_exc()
             await ctx.reply("Invalid channel id!")
 
     def _validate_channel(self, channel_id: int) -> bool:

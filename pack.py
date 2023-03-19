@@ -148,18 +148,22 @@ class MessageHistory:
             lastauthor = pack.author_id
             lasttime = pack.time
 
-            msg = await channel.send(
-                silent=True,
-                files=files,
-                embeds=pack.embeds,
-                content=pack.content,
-            )
+            if len(files) > 0 or len(pack.embeds) > 0 or len(pack.content) > 0:
+                msg = await channel.send(
+                    silent=True,
+                    files=files,
+                    embeds=pack.embeds,
+                    content=pack.content,
+                )
 
-            for reaction in pack.reactions:
-                await msg.add_reaction(reaction)
+                for reaction in pack.reactions:
+                    await msg.add_reaction(reaction)
 
-            if pack.pinned:
-                await msg.pin()
+                if pack.pinned:
+                    await msg.pin()
+
+            else:
+                print("Skipping empty message")
 
             current += 1
             if current % report_freq == 0 and self._progress_ctx is not None:

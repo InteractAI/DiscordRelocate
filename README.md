@@ -58,8 +58,32 @@ You can also type !help category for more info on a category.
    ```
 5. Start bot:
    ```
-   python3 main.py
+   python3 discord-relocate.py
    ```
+
+------
+
+## Command Example
+
+First, list the server IDs where the bot is on and you are an administrator:
+```
+!servers
+```
+
+Next checkout the channel IDs that you want to relocate.\
+Assuming your server ID is `000000000` as example:
+```
+!channels 000000000
+```
+
+Select the channel ID to relocate from and the channel ID to relocate to.\
+Assuming you want to move messages from channel `123456789` to channel `987654321`:
+```
+!relocate 123456789 987654321
+```
+
+**Important**\
+Make sure the bot has access to messages on both channels!
 
 ------
 
